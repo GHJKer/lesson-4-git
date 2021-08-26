@@ -1,18 +1,19 @@
 <template>
   <div id="app">
-    <vueComp />
+    <myForm />
   </div>
 </template>
 
 <script>
-import vueComp from '@/components/vueComp.vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+import myForm from './components/myForm.vue'
 
 export default {
   name: 'App',
   components: {
-    vueComp
+    myForm
   }
 }
 </script>
-
-

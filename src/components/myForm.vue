@@ -20,15 +20,8 @@
       <input 
         id="email" 
         class="form-control"
-        :class="$v.form.email.$error ? 'is-invalid' : ''"
         v-model.trim="form.email"
       >
-      <p v-if="$v.form.login.$dirty && !$v.form.email.required" class="invalid-feedback">
-        Обязательное поле
-      </p>
-      <p v-if="$v.form.login.$dirty && !$v.form.email.email" class="invalid-feedback">
-        Email некорректный
-      </p>
     </div>
     <div class="form-group">
       <label for="password">Пароль:</label>
@@ -140,8 +133,9 @@ export default {
   methods: {
     checkForm () {
       this.$v.form.$touch()
-      if (!this.$v.form.$error) {
+      if (this.$v.form.$error) {
         console.log('Валидация прошла успешно')
+
       }
     }
   }

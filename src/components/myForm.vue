@@ -20,16 +20,27 @@
       <input 
         id="email" 
         class="form-control"
+        :class="$v.form.email.$error ? 'is-invalid' : ''"
         v-model.trim="form.email"
       >
+      <p v-if="$v.form.login.$dirty && !$v.form.email.required" class="invalid-feedback">
+        Обязательное поле
+      </p>
+      <p v-if="$v.form.login.$dirty && !$v.form.email.email" class="invalid-feedback">
+        Email некорректный!
+      </p>
     </div>
     <div class="form-group">
       <label for="password">Пароль:</label>
       <input 
         id="password" 
         class="form-control"
+        :class="$v.form.password.$error ? 'is-invalid' : ''"
         v-model.trim="form.password"
       >
+      <p v-if="$v.form.login.$dirty && !$v.form.password.required" class="invalid-feedback">
+        Обязательное поле
+      </p>
     </div>
     <div class="from-group">
       <label for="country">Страна проживания:</label>
@@ -43,21 +54,32 @@
     </div>
     <div class="from-group">
       <label for="themes">Любимые темы:</label>
-      <select id="themes" class="form-control" v-model="form.favouriteThemes" multiple>
+      <select id="themes" 
+      class="form-control" 
+      :class="$v.form.favouriteThemes.$error ? 'is-invalid' : ''"
+      v-model="form.favouriteThemes" multiple>
         <option
         v-for="(theme, index) in themes"
         :value="theme.value"
         :key="index"
         >{{ theme.label }}</option>
       </select>
+      <p v-if="$v.form.login.$dirty && !$v.form.favouriteThemes.maxLength" class="invalid-feedback">
+        Не более 3-х тем!
+      </p>
     </div>
     <div class="form-group form-check">
       <input type="checkbox" value="1" class="form-check-input" id="notification" v-model="form.mailing">
       <label for="notification" class="form-check-label">Уведомлять меня о новых курсах</label>
     </div>
     <div class="form-group form-check">
-      <input type="checkbox" value="2" class="form-check-input" id="notification" v-model="form.mailing">
-      <label for="notification" class="form-check-label">Уведомлять меня о новых курсах 2</label>
+      <input type="checkbox" value="2" class="form-check-input" id="notification" 
+      :class="$v.form.mailing.$error ? 'is-invalid' : ''"
+      v-model="form.mailing">
+      <label for="notification" class="form-check-label">Ознакомлен с правилами</label>
+      <p v-if="$v.form.login.$dirty && !$v.form.mailing.required" class="invalid-feedback">
+        Ознакомтесь с правилами!
+      </p>
     </div>
     <div class="flex">
       <div class="form-check">
@@ -75,7 +97,7 @@
 
 <script>
 import { validationMixin } from 'vuelidate'
-import { required, minLength, email } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength, email } from 'vuelidate/lib/validators'
 
 export default {
   name: "myForm",
@@ -120,20 +142,26 @@ export default {
           label: 'Кухня',
           value: 'Cuisine'
         },
+        {
+          label: 'Тачки',
+          value: 'Cars'
+        }
       ]
     };
   },
   validations: {
     form: {
       login: {required, minLength: minLength(5)},
-      password: {required, email},
-      email: {required}
+      password: {required},
+      email: {required, email},
+      favouriteThemes: {maxLength: maxLength(3)},
+      mailing: {required}
     }
   },
   methods: {
     checkForm () {
       this.$v.form.$touch()
-      if (this.$v.form.$error) {
+      if (!this.$v.form.$error) {
         console.log('Валидация прошла успешно')
 
       }

@@ -1,5 +1,6 @@
 <template>
-  <form class="sign-up" @submit.prevent="checkForm">
+  <div>
+    <form class="sign-up" v-if="!registrationPassed" @submit.prevent="checkForm">
     <div class="form-group">
       <label for="login">Логин:</label>
       <input 
@@ -74,10 +75,9 @@
     </div>
     <div class="form-group form-check">
       <input type="checkbox" value="2" class="form-check-input" id="notification" 
-      :class="$v.form.mailing.$error ? 'is-invalid' : ''"
-      v-model="form.mailing">
-      <label for="notification" class="form-check-label">Ознакомлен с правилами</label>
-      <p v-if="$v.form.login.$dirty && !$v.form.mailing.required" class="invalid-feedback">
+      v-model="form.agreeWithRules">
+      <label for="notification" :class="$v.form.agreeWithRules.$error ? 'is-invalid' : ''" class="form-check-label">Ознакомлен с правилами</label>
+      <p v-if="$v.form.login.$dirty && !$v.form.agreeWithRules.required" class="invalid-feedback">
         Ознакомтесь с правилами!
       </p>
     </div>
@@ -93,6 +93,10 @@
     </div>
     <button type="submit" class="btn btn-primary">Сохранить</button>
   </form>
+  <div v-else>
+    <h1>{{ `${form.login}, поздравляем вы успешно прошли регистрацию` }}</h1>
+  </div>
+  </div>
 </template>
 
 <script>
@@ -104,12 +108,14 @@ export default {
   mixins: [validationMixin],
   data() {
     return {
+      registrationPassed: false,
       form: {
         password: '',
         email: '',
         login: '',
         country: 'Russia',
         mailing: [],
+        agreeWithRules: [],
         gender: 'male',
         favouriteThemes: [
           'IT'
@@ -155,15 +161,14 @@ export default {
       password: {required},
       email: {required, email},
       favouriteThemes: {maxLength: maxLength(3)},
-      mailing: {required}
+      agreeWithRules: {required}
     }
   },
   methods: {
     checkForm () {
       this.$v.form.$touch()
       if (!this.$v.form.$error) {
-        console.log('Валидация прошла успешно')
-
+        this.registrationPassed = true
       }
     }
   }
@@ -187,6 +192,10 @@ export default {
 
 .flex {
   display: flex;
+}
+
+h1 {
+  text-align: center
 }
 
 button {
